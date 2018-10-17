@@ -1,0 +1,12 @@
+{
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "files.exclude": {
+    "**/.*": true,
+    "**/CVS": true,
+    "bin/": true,
+    "gradle/": true,
+    "gradlew*": true
+  },
+  "wpilib.online": true,
+  "java.format.settings.url": "eclipse-formatter.xml"
+}
