@@ -1,8 +1,13 @@
 {
+	"timeout":20,
 	"drivetrain":{
 		"left1":{
 			"id": 0,
-			"reversed": true
+			"reversed": true,
+			"sensor": {
+				"type":"quad",
+				"reversed":false
+			}
 		},
 		"left2":{
 			"id": 1,
@@ -14,7 +19,11 @@
 		},
 		"right1":{
 			"id": 15,
-			"reversed": false
+			"reversed": false,
+			"sensor": {
+				"type":"quad",
+				"reversed":false
+			}
 		},
 		"right2":{
 			"id": 14,

@@ -58,7 +58,21 @@ public class DriveTrain extends Subsystem {
 		leftMaster.set(ControlMode.PercentOutput, 0);
 	}
 
+	public double leftPos() {
+		return leftMaster.getSelectedSensorPosition(0);
+	}
+	public double leftVel() {
+		return leftMaster.getSelectedSensorVelocity(0);
+	}
+	public double rightPos() {
+		return rightMaster.getSelectedSensorPosition(0);
+	}
+	public double rightVel() {
+		return rightMaster.getSelectedSensorVelocity(0);
+	}
+
 	@Override
 	public void initDefaultCommand() {
+		// do nothing
 	}
 }

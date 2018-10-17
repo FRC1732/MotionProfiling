@@ -4,6 +4,7 @@ import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.List;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
@@ -13,15 +14,21 @@ import org.json.simple.parser.JSONParser;
 public class Config {
 	private final String name;
 	private final Map<String, Object> configOBJ;
+	private int TIMEOUT;
 	
 	public Config(String name) {
 		this.name = name;
 		try {
 			configOBJ = (Map<String, Object>) new JSONParser()
-			        .parse(new InputStreamReader(Config.class.getResourceAsStream(name+".json")));
+			        .parse(new InputStreamReader(Config.class.getResourceAsStream(name + ".json")));
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("Config Failed to parse");
+		}
+		try {
+			TIMEOUT = getInt("timeout");
+		} catch (Exception e) {
+			TIMEOUT = 20;
 		}
 	}
 	
@@ -79,6 +86,15 @@ public class Config {
 		}
 	}
 	
+	public String getString(String path) {
+		Object n = get(path);
+		if (n instanceof String) {
+			return (String) n;
+		} else {
+			throw new RuntimeException("Path '" + path + "' is not a string in config " + name);
+		}
+	}
+	
 	public List<Object> getList(String path) {
 		Object n = get(path);
 		if (n instanceof List) {
@@ -104,6 +120,30 @@ public class Config {
 		} catch (Exception e) {
 		}
 		
+		try {
+			get(path + ".sensor");
+			int pidIdx;
+			try {
+				pidIdx = getInt(path + ".sensor.pid");
+			} catch (Exception e) {
+				pidIdx = 0;
+			}
+			switch (getString(path + ".sensor.type")) {
+				case "quad":
+					motor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, pidIdx, TIMEOUT);
+					break;
+				case "analog":
+					motor.configSelectedFeedbackSensor(FeedbackDevice.Analog, pidIdx, TIMEOUT);
+					break;
+				default: 
+					throw new RuntimeException(getString(path + ".sensor.type") + " is not a valid encoder type");
+			}
+			try {
+				motor.setSensorPhase(getBool(path+".sensor.reversed"));
+			} catch (Exception e) {
+			}
+		}catch(Exception e) {
+		}
 		return motor;
 	}
 	
