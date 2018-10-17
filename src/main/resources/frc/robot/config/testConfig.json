@@ -1,0 +1,36 @@
+{
+	"drivetrain":{
+		"left1":{
+			"id": 0,
+			"reversed": true
+		},
+		"left2":{
+			"id": 1,
+			"reversed": true
+		},
+		"left3":{
+			"id": 2,
+			"reversed": true
+		},
+		"right1":{
+			"id": 15,
+			"reversed": false
+		},
+		"right2":{
+			"id": 14,
+			"reversed": false
+		},
+		"right3":{
+			"id": 13,
+			"reversed": false
+		}
+	},
+	"oi":{
+		"left":{
+			"port":0
+		},
+		"right":{
+			"port":1
+		}
+	}
+}
