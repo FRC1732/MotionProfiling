@@ -9,7 +9,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import frc.robot.config.Config;
+import frc.robot.commands.TankDrive;
+import frc.robot.util.Config;
 import frc.robot.subsystems.DriveTrain;
 
 /**
@@ -90,6 +91,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopInit() {
 		reset();
+		new TankDrive().start();
 	}
 	
 	/**

@@ -36,10 +36,10 @@
 	},
 	"oi":{
 		"left":{
-			"port":0
+			"port":1
 		},
 		"right":{
-			"port":1
+			"port":0
 		}
 	}
 }

@@ -1,4 +1,4 @@
-package frc.robot.config;
+package frc.robot.util;
 
 import java.io.InputStreamReader;
 import java.util.Map;
@@ -43,13 +43,38 @@ public class Config {
 		}
 		return o;
 	}
-	
+	private int next(String s, char one, char two) {
+		int o = s.indexOf(one);
+		int t = s.indexOf(two);
+		if(o == -1 && t == -1) {
+			return s.length();
+		}else if(t == -1) {
+			return o;
+		}else if(o == -1) {
+			return t;
+		}else {
+			return Math.min(o, t);
+		}
+	}
+	private int next1(String s, char one, char two) {
+		int o = s.indexOf(one);
+		int t = s.indexOf(two);
+		if(o == -1 && t == -1) {
+			return s.length()-1;
+		}else if(t == -1) {
+			return o;
+		}else if(o == -1) {
+			return t;
+		}else {
+			return Math.min(o, t);
+		}
+	}
 	private Object get(String path, Object config) {
 		if (path.length() == 0) {
 			return config;
 		} else if (config instanceof Map) {
-			String part = path.substring(0, Math.min(path.indexOf('.'), path.indexOf('[')));
-			return get(path.substring(Math.min(path.indexOf('.'), path.indexOf('[')) + 1),
+			String part = path.substring(0, next(path, '.', '['));
+			return get(path.substring(next1(path, '.', '[') + 1),
 			        ((Map<String, Object>) config).get(part));
 		} else if (config instanceof List) {
 			String part = path.substring(0, path.indexOf(']'));

@@ -18,6 +18,8 @@ public class TankDrive extends Command {
 	// Called just before this Command runs the first time
 	@Override
 	protected void initialize() {
+		System.out.println("Drive Control: TankDrive");
+		System.out.println("\tTankDrive provides a control system using two joysticks, one for each side");
 	}
 	
 	// Called repeatedly when this Command is scheduled to run
