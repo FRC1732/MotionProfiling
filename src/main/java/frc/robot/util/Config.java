@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.List;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
@@ -23,7 +24,7 @@ public class Config {
 			        .parse(new InputStreamReader(Config.class.getResourceAsStream(name + ".json")));
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new RuntimeException("Config Failed to parse");
+			throw new RuntimeException("Config failed to parse");
 		}
 		try {
 			TIMEOUT = getInt("timeout");
@@ -144,7 +145,7 @@ public class Config {
 			motor.setInverted(getBool(path + ".reversed"));
 		} catch (Exception e) {
 		}
-		
+		motor.setNeutralMode(NeutralMode.Brake);
 		try {
 			get(path + ".sensor");
 			int pidIdx;
@@ -178,6 +179,7 @@ public class Config {
 			motor.setInverted(getBool(path + ".reversed"));
 		} catch (Exception e) {
 		}
+		motor.setNeutralMode(NeutralMode.Brake);
 		
 		return motor;
 	}
