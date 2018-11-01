@@ -10,8 +10,11 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.robot.commands.TankDrive;
+import frc.robot.commands.auto.ArcTurn;
+import frc.robot.commands.auto.DriveStraight;
 import frc.robot.util.Config;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.NavX;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -22,7 +25,10 @@ import frc.robot.subsystems.DriveTrain;
  */
 public class Robot extends TimedRobot {
 	public static final Config config = new Config("testConfig");
+	public static final double ROBOT_WIDTH = config.getDouble("robot.width");
+	public static final double ROBOT_LENGTH = config.getDouble("robot.length");
 	public static final DriveTrain drivetrain = new DriveTrain(config);
+	public static final NavX navx = new NavX(config);
 	public static OI oi;
 	
 	/**
@@ -78,6 +84,8 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		reset();
+		// new DriveStraight(100).start();
+		new ArcTurn(100, -90).start();
 	}
 	
 	/**
@@ -111,5 +119,7 @@ public class Robot extends TimedRobot {
 	
 	private void reset() {
 		Scheduler.getInstance().removeAll();
+		navx.zero();
+		drivetrain.zero();
 	}
 }
