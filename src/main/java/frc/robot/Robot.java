@@ -9,12 +9,12 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.TankDrive;
 import frc.robot.commands.auto.ArcTurn;
-import frc.robot.commands.auto.DriveStraight;
-import frc.robot.util.Config;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.NavX;
+import frc.robot.util.Config;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -39,6 +39,7 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		oi = new OI(config);
 		reset();
+		SmartDashboard.putData(navx);
 	}
 	
 	/**
@@ -85,7 +86,7 @@ public class Robot extends TimedRobot {
 	public void autonomousInit() {
 		reset();
 		// new DriveStraight(100).start();
-		new ArcTurn(100, -90).start();
+		new ArcTurn(60, -90).start();
 	}
 	
 	/**
