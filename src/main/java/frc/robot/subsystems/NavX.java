@@ -9,21 +9,22 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.wpilibj.SPI.Port;
+import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 import frc.robot.util.Config;
 
 /**
  * Add your docs here.
  */
-public class NavX extends Subsystem {
+public class NavX extends Subsystem implements Sendable {
 	// Put methods for controlling this subsystem
 	// here. Call these from Commands.
 	
 	private AHRS ahrs;
 	
 	public NavX(Config config) {
-		ahrs = new AHRS(Port.kMXP);
+		ahrs = config.createNavX("navx");
 	}
 	
 	public double getAngle() {
@@ -44,5 +45,11 @@ public class NavX extends Subsystem {
 	
 	public boolean isConnected() {
 		return ahrs.isConnected();
+	}
+	
+	@Override
+	public void initSendable(SendableBuilder builder) {
+		builder.setSmartDashboardType("Gyro");
+		builder.addDoubleProperty("Value", this::getAngle, null);
 	}
 }

@@ -1,15 +1,18 @@
 package frc.robot.util;
 
 import java.io.InputStreamReader;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.kauailabs.navx.frc.AHRS;
 
 import org.json.simple.parser.JSONParser;
+
+import edu.wpi.first.wpilibj.SPI;
 
 @SuppressWarnings("unchecked")
 public class Config {
@@ -44,39 +47,41 @@ public class Config {
 		}
 		return o;
 	}
+	
 	private int next(String s, char one, char two) {
 		int o = s.indexOf(one);
 		int t = s.indexOf(two);
-		if(o == -1 && t == -1) {
+		if (o == -1 && t == -1) {
 			return s.length();
-		}else if(t == -1) {
+		} else if (t == -1) {
 			return o;
-		}else if(o == -1) {
+		} else if (o == -1) {
 			return t;
-		}else {
+		} else {
 			return Math.min(o, t);
 		}
 	}
+	
 	private int next1(String s, char one, char two) {
 		int o = s.indexOf(one);
 		int t = s.indexOf(two);
-		if(o == -1 && t == -1) {
-			return s.length()-1;
-		}else if(t == -1) {
+		if (o == -1 && t == -1) {
+			return s.length() - 1;
+		} else if (t == -1) {
 			return o;
-		}else if(o == -1) {
+		} else if (o == -1) {
 			return t;
-		}else {
+		} else {
 			return Math.min(o, t);
 		}
 	}
+	
 	private Object get(String path, Object config) {
 		if (path.length() == 0) {
 			return config;
 		} else if (config instanceof Map) {
 			String part = path.substring(0, next(path, '.', '['));
-			return get(path.substring(next1(path, '.', '[') + 1),
-			        ((Map<String, Object>) config).get(part));
+			return get(path.substring(next1(path, '.', '[') + 1), ((Map<String, Object>) config).get(part));
 		} else if (config instanceof List) {
 			String part = path.substring(0, path.indexOf(']'));
 			return get(path.substring(path.indexOf(']') + 2), ((List<Object>) config).get(Integer.parseInt(part)));
@@ -161,14 +166,14 @@ public class Config {
 				case "analog":
 					motor.configSelectedFeedbackSensor(FeedbackDevice.Analog, pidIdx, TIMEOUT);
 					break;
-				default: 
+				default:
 					throw new RuntimeException(getString(path + ".sensor.type") + " is not a valid encoder type");
 			}
 			try {
-				motor.setSensorPhase(getBool(path+".sensor.reversed"));
+				motor.setSensorPhase(getBool(path + ".sensor.reversed"));
 			} catch (Exception e) {
 			}
-		}catch(Exception e) {
+		} catch (Exception e) {
 		}
 		return motor;
 	}
@@ -182,5 +187,17 @@ public class Config {
 		motor.setNeutralMode(NeutralMode.Brake);
 		
 		return motor;
+	}
+	
+	public AHRS createNavX(String path) {
+		AHRS out;
+		switch (getString(path + ".port")) {
+			case "kMXP":
+				out = new AHRS(SPI.Port.kMXP);
+				break;
+			default:
+				throw new RuntimeException(getString(path + ".port") + " is not a valid port type for navx");
+		}
+		return out;
 	}
 }

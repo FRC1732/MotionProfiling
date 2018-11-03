@@ -1,15 +1,15 @@
 plugins {
-    id "java"
-    id "edu.wpi.first.GradleRIO" version "2019.0.0-alpha-3"
+    id 'java'
+    id 'edu.wpi.first.GradleRIO' version '2019.0.0-alpha-3'
 }
 
-def ROBOT_CLASS = "frc.robot.Robot"
+def ROBOT_CLASS = 'frc.robot.Robot'
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project EmbeddedTools.
 deploy {
     targets {
-        target("roborio", edu.wpi.first.gradlerio.frc.RoboRIO) {
+        target('roborio', edu.wpi.first.gradlerio.frc.RoboRIO) {
             // Team number is loaded either from the .wpilib/wpilib_preferences.json
             // or from command line. If not found an exception will be thrown.
             // You can use getTeamOrDefault(team) instead of getTeamNumber if you
@@ -19,7 +19,7 @@ deploy {
     }
     artifacts {
         artifact('frcJava', edu.wpi.first.gradlerio.frc.FRCJavaArtifact) {
-            targets << "roborio"
+            targets << 'roborio'
             // Debug can be overridden by command line, for use with VSCode
             debug = getDebugOrDefault(false)
         }
@@ -28,8 +28,9 @@ deploy {
 
 repositories {
 	maven {
-		url "http://central.maven.org/maven2/"
+		url 'http://central.maven.org/maven2/'
 	}
+	jcenter()
 }
 // Defining my dependencies. In this case, WPILib (+ friends), CTRE Toolsuite (Talon SRX)
 // and NavX.
@@ -38,6 +39,8 @@ dependencies {
     compile ctre()
     compile navx()
 	compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'
+	testCompile 'junit:junit:4.12'
+	testCompile 'org.mockito:mockito-core:2.+'
 }
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
@@ -57,4 +60,9 @@ compileJava {
 
 wrapper {
     gradleVersion = '4.9'
+}
+
+test {
+	useJUnit()
+	failFast = false
 }
