@@ -1,50 +1,55 @@
 {
-	"timeout":20,
-	"robot":{
-		"width":24.0,
-		"length":38.0
+	"timeout": 20,
+	"robot": {
+		"width": 24.0,
+		"length": 38.0
 	},
-	"drivetrain":{
-		"encoderConversion":0.0019521852101349,
-		"left1":{
+	"drivetrain": {
+		"encoderConversion": 0.0019521852101349,
+		"left1": {
 			"id": 0,
 			"reversed": true,
 			"sensor": {
-				"type":"quad",
-				"reversed":true
+				"type": "quad",
+				"reversed": true
 			}
 		},
-		"left2":{
+		"left2": {
 			"id": 1,
 			"reversed": true
 		},
-		"left3":{
+		"left3": {
 			"id": 2,
 			"reversed": true
 		},
-		"right1":{
+		"right1": {
 			"id": 15,
 			"reversed": false,
 			"sensor": {
-				"type":"quad",
-				"reversed":true
+				"type": "quad",
+				"reversed": true
 			}
 		},
-		"right2":{
+		"right2": {
 			"id": 14,
 			"reversed": false
 		},
-		"right3":{
+		"right3": {
 			"id": 13,
 			"reversed": false
 		}
 	},
-	"oi":{
-		"left":{
-			"port":1
+	"navx": {
+		"port": "kMXP"
+	},
+	"oi": {
+		"left": {
+			"port": 1,
+			"buttons": {}
 		},
-		"right":{
-			"port":0
+		"right": {
+			"port": 0,
+			"buttons": {}
 		}
 	}
 }

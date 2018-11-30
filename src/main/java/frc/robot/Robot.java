@@ -24,12 +24,34 @@ import frc.robot.util.Config;
  * project.
  */
 public class Robot extends TimedRobot {
-	public static final Config config = new Config("testConfig");
-	public static final double ROBOT_WIDTH = config.getDouble("robot.width");
-	public static final double ROBOT_LENGTH = config.getDouble("robot.length");
-	public static final DriveTrain drivetrain = new DriveTrain(config);
-	public static final NavX navx = new NavX(config);
-	public static OI oi;
+	private final Config config = Config.createConfig();
+	private final double ROBOT_WIDTH = config.getDouble("robot.width");
+	private final double ROBOT_LENGTH = config.getDouble("robot.length");
+	private final DriveTrain drivetrain = new DriveTrain(config);
+	private final NavX navx = new NavX(config);
+	private OI oi;
+	
+	public double getROBOT_WIDTH() {
+		return this.ROBOT_WIDTH;
+	}
+	
+	public double getROBOT_LENGTH() {
+		return this.ROBOT_LENGTH;
+	}
+	
+	public DriveTrain getDrivetrain() {
+		return this.drivetrain;
+	}
+	
+	public NavX getNavx() {
+		return this.navx;
+	}
+	
+	public OI getOi() {
+		return this.oi;
+	}
+	
+	private ArcTurn auton;
 	
 	/**
 	 * This function is run when the robot is first started up and should be used
@@ -39,7 +61,9 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		oi = new OI(config);
 		reset();
+		auton = new ArcTurn(this, 60, -90, false);
 		SmartDashboard.putData(navx);
+		SmartDashboard.putData(auton);
 	}
 	
 	/**
@@ -86,7 +110,7 @@ public class Robot extends TimedRobot {
 	public void autonomousInit() {
 		reset();
 		// new DriveStraight(100).start();
-		new ArcTurn(60, -90).start();
+		auton.start();
 	}
 	
 	/**
@@ -100,7 +124,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopInit() {
 		reset();
-		new TankDrive().start();
+		new TankDrive(this).start();
 	}
 	
 	/**

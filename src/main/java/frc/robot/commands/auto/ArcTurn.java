@@ -8,7 +8,6 @@
 package frc.robot.commands.auto;
 
 import edu.wpi.first.wpilibj.Sendable;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 import frc.robot.Robot;
@@ -23,54 +22,53 @@ public class ArcTurn extends Command implements Sendable {
 	public double D = 0;
 	public double F = 0;
 	private final double radius;
+	private final Robot robot;
 	private double angle;
-	private boolean reversed = false;
+	private boolean reversed;
 	
-	public ArcTurn(double radius, double angle) {
+	public ArcTurn(Robot robot, double radius, double angle, boolean reversed) {
+		this.robot = robot;
 		this.radius = radius;
 		this.angle = angle;
+		this.reversed = reversed;
 		this.iError = new Integrator();
-		this.t = new Timer();
-		requires(Robot.drivetrain);
+		requires(robot.getDrivetrain());
 	}
 	
 	private double end;
 	private Integrator iError;
-	private Timer t;
 	private double lastT;
 	
 	private double getError() {
-		return Robot.navx.getTotalAngle() - end;
+		return end - robot.getNavx().getTotalAngle();
 	}
 	
 	// Called just before this Command runs the first time
 	@Override
 	protected void initialize() {
-		end = Robot.navx.getTotalAngle() - angle;
+		end = robot.getNavx().getTotalAngle() + angle;
 		iError.reset();
-		t.reset();
-		t.start();
-		lastT = 0;
+		lastT = System.currentTimeMillis() / 1000.0;
 	}
 	
 	// Called repeatedly when this Command is scheduled to run
 	@Override
 	protected void execute() {
 		double error = getError();// * Math.signum(angle);
-		double d = D * (error - iError.getLast()) / (t.get() - lastT);
-		double i = I * iError.addSection(error, t.get() - lastT);
+		double d = D * (error - iError.getLast()) / (System.currentTimeMillis() / 1000.0 - lastT);
+		double i = I * iError.addSection(error, System.currentTimeMillis() / 1000.0 - lastT);
 		double p = P * error;
-		double pid = MathUtil.clamp(p + i + d) * (reversed ? -1 : 1);
-		double innerPid = pid * MathUtil.innerSpeed(radius, Robot.ROBOT_WIDTH);
-		if (angle < 0) {
-			Robot.drivetrain.set(innerPid, pid);
+		double pid = Math.abs(MathUtil.clamp(p + i + d + F)) * Math.signum(error);
+		double innerPid = pid * MathUtil.innerSpeed(radius, robot.getROBOT_WIDTH());
+		if (!reversed) {
+			robot.getDrivetrain().set(innerPid, pid);
 		} else {
-			Robot.drivetrain.set(pid, innerPid);
+			robot.getDrivetrain().set(pid, innerPid);
 		}
 		
 		System.out.println(
-		        "e: " + getError() + ", pid: " + pid + ", i:" + MathUtil.innerSpeed(radius, Robot.ROBOT_WIDTH));
-		lastT = t.get();
+		        "e: " + getError() + ", pid: " + pid + ", i:" + (pid*MathUtil.innerSpeed(radius, robot.getROBOT_WIDTH())));
+		lastT = System.currentTimeMillis() / 1000.0;
 	}
 	
 	@Override
@@ -145,13 +143,13 @@ public class ArcTurn extends Command implements Sendable {
 	// Called once after isFinished returns true
 	@Override
 	protected void end() {
-		Robot.drivetrain.stop();
+		robot.getDrivetrain().stop();
 	}
 	
 	// Called when another command which requires one or more of the same
 	// subsystems is scheduled to run
 	@Override
 	protected void interrupted() {
-		Robot.drivetrain.stop();
+		robot.getDrivetrain().stop();
 	}
 }

@@ -11,8 +11,10 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
 public class TankDrive extends Command {
-	public TankDrive() {
-		requires(Robot.drivetrain);
+	private final Robot robot;
+	public TankDrive(Robot robot) {
+		this.robot = robot;
+		requires(robot.getDrivetrain());
 	}
 	
 	// Called just before this Command runs the first time
@@ -25,7 +27,7 @@ public class TankDrive extends Command {
 	// Called repeatedly when this Command is scheduled to run
 	@Override
 	protected void execute() {
-		Robot.drivetrain.set(Robot.oi.getLeft(), Robot.oi.getRight());
+		robot.getDrivetrain().set(robot.getOi().getLeft(), robot.getOi().getRight());
 	}
 	
 	// Make this return true when this Command no longer needs to run execute()
@@ -37,13 +39,13 @@ public class TankDrive extends Command {
 	// Called once after isFinished returns true
 	@Override
 	protected void end() {
-		Robot.drivetrain.stop();
+		robot.getDrivetrain().stop();
 	}
 	
 	// Called when another command which requires one or more of the same
 	// subsystems is scheduled to run
 	@Override
 	protected void interrupted() {
-		Robot.drivetrain.stop();
+		robot.getDrivetrain().stop();
 	}
 }

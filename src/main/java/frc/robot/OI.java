@@ -7,8 +7,13 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.Joystick;
+import java.util.HashMap;
+import java.util.Map;
+
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.util.Config;
+import frc.robot.util.JoystickReader;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -43,17 +48,64 @@ public class OI {
 	// Start the command when the button is released and let it run the command
 	// until it is finished as determined by it's isFinished method.
 	// button.whenReleased(new ExampleCommand());
-	public final Joystick left;
-	public final Joystick right;
+	public final JoystickReader left;
+	public final JoystickReader right;
+	private Map<String, JoystickButton> buttonMap;
 	public OI(Config config) {
-		left = new Joystick(config.getInt(PATH+".left.port"));
-		right = new Joystick(config.getInt(PATH+".right.port"));
+		buttonMap = new HashMap<>();
+		left = config.createJoystick(PATH+".left", buttonMap);
+		right = config.createJoystick(PATH+".right", buttonMap);
 	}
 
 	public double getLeft() {
-		return left.getY();
+		return left.getValue();
 	}
 	public double getRight() {
-		return right.getY();
+		return right.getValue();
 	}
+
+	/**
+	 * @param button - The button to bind to
+	 * @param command to run while the button is pressed
+	 * @return the command
+	 */
+	public Command bindCommandWhile(String button, Command command) {
+		if(buttonMap.containsKey(button)) {
+			buttonMap.get(button).whileHeld(command);
+			return command;
+		}else {
+			throw new RuntimeException(button+" is not a defined button in config");
+		}
+	}
+	
+	/**
+	 * @param button - The button to bind to
+	 * @param command to run when the button is pressed
+	 * @return the command
+	 * Runs command until it is canceled, e.g. by bindCommandRelease(String, command), or the isFinished returns true
+	 */
+	public Command bindCommandPress(String button, Command command) {
+		if(buttonMap.containsKey(button)) {
+			buttonMap.get(button).whenPressed(command);
+			return command;
+		}else {
+			throw new RuntimeException(button+" is not a defined button in config");
+		}
+	}
+
+	/**
+	 * @param button - The button to bind to
+	 * @param command to cancel when the button is pressed
+	 * @return the command
+	 * Cancels running command, e.g. a command started by bindCommandPress(String, command)
+	 */
+	public Command bindCommandRelease(String button, Command command) {
+		if(buttonMap.containsKey(button)) {
+			buttonMap.get(button).cancelWhenPressed(command);
+			return command;
+		}else {
+			throw new RuntimeException(button+" is not a defined button in config");
+		}
+	}
+
 }

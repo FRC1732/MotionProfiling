@@ -18,20 +18,22 @@ public class DriveStraight extends Command {
 	public static final double D = 0;
 	public static final double K = 0.01;
 	private final double distance;
+	private final Robot robot;
 
-	public DriveStraight(double distance) {
+	public DriveStraight(Robot robot, double distance) {
 		this.distance = distance;
-		requires(Robot.drivetrain);
+		this.robot = robot;
+		requires(robot.getDrivetrain());
 	}
 	
 	private double end;
 	private double getError() {
-		return (Robot.drivetrain.leftPos()+Robot.drivetrain.rightPos())/2 - end;
+		return end - (robot.getDrivetrain().leftPos()+robot.getDrivetrain().rightPos())/2;
 	}
 	// Called just before this Command runs the first time
 	@Override
 	protected void initialize() {
-		end = (Robot.drivetrain.leftPos()+Robot.drivetrain.rightPos())/2 + distance;
+		end = (robot.getDrivetrain().leftPos()+robot.getDrivetrain().rightPos())/2 + distance;
 		System.out.println("Init Drivestraight");
 		System.out.printf("%f -> %f\n", getError(), 0.0);
 	}
@@ -40,9 +42,9 @@ public class DriveStraight extends Command {
 	@Override
 	protected void execute() {
 		double error = getError();
-		double pid = P*error + K;
+		double pid = (Math.abs(P*error) + K) * Math.signum(error);
 		System.out.printf("%f -> %f\n", error, pid);
-		Robot.drivetrain.set(clamp(pid), clamp(pid));
+		robot.getDrivetrain().set(clamp(pid), clamp(pid));
 	}
 
 	private double clamp(double d) {
@@ -70,13 +72,13 @@ public class DriveStraight extends Command {
 	// Called once after isFinished returns true
 	@Override
 	protected void end() {
-		Robot.drivetrain.stop();
+		robot.getDrivetrain().stop();
 	}
 	
 	// Called when another command which requires one or more of the same
 	// subsystems is scheduled to run
 	@Override
 	protected void interrupted() {
-		Robot.drivetrain.stop();
+		robot.getDrivetrain().stop();
 	}
 }
